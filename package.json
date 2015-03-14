@@ -1,0 +1,32 @@
+{
+  "name": "gebo-proxy",
+  "version": "0.0.0",
+  "description": "Proxy server to enable multiple gebo agents to occupy the same domain",
+  "main": "proxy.js",
+  "scripts": {
+    "test": "nodeunit test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RaphaelDeLaGhetto/gebo-proxy.git"
+  },
+  "keywords": [
+    "gebo",
+    "proxy"
+  ],
+  "author": "Daniel Bidulock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RaphaelDeLaGhetto/gebo-proxy/issues"
+  },
+  "homepage": "https://github.com/RaphaelDeLaGhetto/gebo-proxy",
+  "dependencies": {
+    "http-proxy": "^1.9.0",
+    "nconf": "^0.7.1",
+    "winston": "^0.9.0"
+  },
+  "devDependencies": {
+    "node-mocks-http": "^1.2.5",
+    "sinon": "^1.14.0"
+  }
+}

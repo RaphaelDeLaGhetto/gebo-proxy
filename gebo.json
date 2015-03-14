@@ -1,0 +1,9 @@
+{
+    "port": 3443,
+    "ssl": {
+        "key": "cert/ssl.key",
+        "cert": "cert/ssl.crt"
+    },
+    "somegebo@example.com": "https://somecrazydomain.com",
+    "anothergebo@capitolhill.ca": "https://localhost:4443"
+}
