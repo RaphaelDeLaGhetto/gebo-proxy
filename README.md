@@ -109,7 +109,7 @@ This is an example of you might configure gebo-proxy to run as a server.
 Create a new configuration file:
 
 ```
-sudo vim /etc/init/docTo.conf
+sudo vim /etc/init/gebo-proxy.conf
 ```
 
 Write this:
@@ -127,7 +127,6 @@ script
     console log
 end script
 ```
-
 
 # License
 
