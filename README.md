@@ -115,7 +115,7 @@ sudo vim /etc/init/gebo-proxy.conf
 Write this:
 
 ```
-description "My gebo"
+description "gebo-proxy for www.example.com"
 author "RaphaelDeLaGhetto, raphael@theghetto.ca"
 
 start on (local-filesystems and net-device-up IFACE!=lo)
