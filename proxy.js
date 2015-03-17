@@ -2,6 +2,7 @@ var fs = require('fs'),
     httpProxy = require('http-proxy'),
     https = require('https'),
     nconf = require('nconf'),
+    url = require('url'),
     winston = require('winston');
 
 
@@ -25,18 +26,40 @@ exports.proxy = _proxy;
  * @param object
  */
 var _requestHandler = function(req, res) {
-    // No receiver specified
-    if (req.body && !req.body.receiver) {
-      res.end('A receiver needs to be specified in the message');
-      return;
+    var target;
+    var urlParts = url.parse(req.url, true);
+
+    // If there's a body, then there's probably a message inside
+    if (req.body) {
+
+      // No receiver specified
+      if (!req.body.receiver) {
+        res.end('A receiver needs to be specified in the message');
+        return;
+      }
+
+      target = nconf.get(req.body.receiver);
+
+      if (!target) {
+        res.end(req.body.receiver + ' is not registered with this proxy');
+        return;
+      }
+    }
+    // Check for receiver in query string
+    else if (urlParts.query.receiver){
+      target = nconf.get(urlParts.query.receiver);
+
+      if (!target) {
+        res.end(urlParts.query.receiver + ' is not registered with this proxy');
+        return;
+      }
     }
 
-    var target = nconf.get(req.body.receiver);
     if (target) {
-      _proxy.web(req, res, { target: target + '/perform', secure: false });
+      _proxy.web(req, res, { target: target + urlParts.path, secure: false });
     }
     else {
-      res.end(req.body.receiver + ' is not registered with this proxy');
+      res.end('I don\'t know where to forward that message');
     }
   };
 exports.requestHandler = _requestHandler;

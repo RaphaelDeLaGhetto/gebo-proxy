@@ -87,7 +87,7 @@ exports.requestHandler = {
         test.expect(5);
         var req = httpMocks.createRequest({
                 method: 'POST',
-                url: 'someweirddomain.com/perform',
+                url: 'https://someweirddomain.com/perform',
                 body: {
                     sender: 'someagent@somedomain.com',
                     receiver: 'somegebo@example.com',
@@ -113,7 +113,7 @@ exports.requestHandler = {
         test.expect(3);
         var req = httpMocks.createRequest({
                 method: 'POST',
-                url: 'someweirddomain.com/perform',
+                url: 'https://someweirddomain.com/perform',
                 body: {
                     sender: 'someagent@somedomain.com',
                     action: 'ls',
@@ -137,7 +137,7 @@ exports.requestHandler = {
         test.expect(3);
         var req = httpMocks.createRequest({
                 method: 'POST',
-                url: 'someweirddomain.com/perform',
+                url: 'https://someweirddomain.com/perform',
                 body: {
                     sender: 'someagent@somedomain.com',
                     receiver: 'nosuchgebo@example.com',
@@ -157,6 +157,63 @@ exports.requestHandler = {
 
         test.done();
     },
+
+    'Don\'t barf if no body or receiver query string parameter is set': function(test) {
+        test.expect(3);
+        var req = httpMocks.createRequest({
+                method: 'POST',
+                url: 'https://someweirddomain.com/login',
+          });
+        delete req.body;
+        var res = httpMocks.createResponse();
+
+        _proxy.requestHandler(req, res)
+
+        test.equal(_proxy.proxy.web.callCount, 0);
+        test.ok(res._isEndCalled());
+        test.equal(res._getData(), 'I don\'t know where to forward that message');
+
+        test.done();
+    },
+
+    'Forward to receiver indentified in the query string': function(test) {
+        test.expect(5);
+        var req = httpMocks.createRequest({
+                method: 'POST',
+                url: 'https://someweirddomain.com/login?receiver=anothergebo@capitolhill.ca',
+          });
+        delete req.body;
+        var res = httpMocks.createResponse();
+
+        _proxy.requestHandler(req, res)
+
+        test.equal(_proxy.proxy.web.callCount, 1);
+        test.equal(_proxy.proxy.web.getCall(0).args[0], req);
+        test.equal(_proxy.proxy.web.getCall(0).args[1], res);
+        test.equal(_proxy.proxy.web.getCall(0).args[2].target, 'https://localhost:4443/login?receiver=anothergebo@capitolhill.ca');
+        test.equal(_proxy.proxy.web.getCall(0).args[2].secure, false);
+
+        test.done();
+    },
+
+    'Don\'t barf if receiver indentified in the query string does not exist': function(test) {
+        test.expect(3);
+        var req = httpMocks.createRequest({
+                method: 'POST',
+                url: 'https://someweirddomain.com/login?receiver=nosuchagent@nosuchdomain.ca',
+          });
+        delete req.body;
+        var res = httpMocks.createResponse();
+
+        _proxy.requestHandler(req, res)
+
+        test.equal(_proxy.proxy.web.callCount, 0);
+        test.ok(res._isEndCalled());
+        test.equal(res._getData(), 'nosuchagent@nosuchdomain.ca is not registered with this proxy');
+
+        test.done();
+    },
+
 };
 
 
