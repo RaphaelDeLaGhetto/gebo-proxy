@@ -92,10 +92,6 @@ server {
 
     location / {
         proxy_pass https://localhost:3443; # As configured in gebo-proxy's gebo.json
-        proxy_set_header Host $host;
-
-        # re-write redirects to http as to https, example: /home
-        proxy_redirect http:// https://;
     }
 }
 ```
